@@ -1,0 +1,12 @@
+CREATE MATERIALIZED VIEW mv_media_avaliacoes_por_periodo AS
+SELECT
+    TP_PERIODO,
+    ROUND(AVG(qtd_avaliacoes), 2) AS MEDIA_AVALIACOES,
+    COUNT(*) AS QT_TURMAS_ANALISADAS
+FROM (
+    SELECT t.ID_TURMA, t.TP_PERIODO, COUNT(a.ID_AVALIACAO) AS qtd_avaliacoes
+    FROM TB_Turma t
+    JOIN TB_Avaliacao a ON t.ID_TURMA = a.FK_TURMA
+    GROUP BY t.ID_TURMA, t.TP_PERIODO
+) sub
+GROUP BY TP_PERIODO;
