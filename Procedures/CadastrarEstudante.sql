@@ -8,6 +8,7 @@ AS $$
 DECLARE
     v_id_estudante INTEGER;
     v_count INTEGER;
+    v_status_turma VARCHAR(20);
 BEGIN
     BEGIN
         -- Verifica se a matrícula já existe
@@ -19,13 +20,18 @@ BEGIN
             RAISE EXCEPTION 'Matrícula % já cadastrada.', p_matricula;
         END IF;
 
-        -- Verifica se a turma existe
-        SELECT COUNT(*) INTO v_count
+        -- Verifica se a turma existe e obtém o status
+        SELECT ST_TURMA INTO v_status_turma
         FROM TB_Turma
         WHERE ID_TURMA = p_id_turma;
 
-        IF v_count = 0 THEN
+        IF NOT FOUND THEN
             RAISE EXCEPTION 'Turma com ID % não existe.', p_id_turma;
+        END IF;
+
+        -- Verifica se a turma está ativa
+        IF v_status_turma <> 'ativa' THEN
+            RAISE EXCEPTION 'Turma com ID % está inativa.', p_id_turma;
         END IF;
 
         -- Insere novo estudante
@@ -42,7 +48,7 @@ BEGIN
         SET NM_ESTUDANTE = INITCAP(NM_ESTUDANTE)
         WHERE ID_ESTUDANTE = v_id_estudante;
 
-        -- 🆕 Atualiza data da última matrícula
+        -- Atualiza data da última matrícula
         UPDATE TB_Estudante
         SET DT_ULTIMA_MATRICULA = CURRENT_DATE
         WHERE ID_ESTUDANTE = v_id_estudante;
