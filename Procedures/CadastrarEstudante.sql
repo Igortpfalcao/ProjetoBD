@@ -29,7 +29,7 @@ BEGIN
             RAISE EXCEPTION 'Turma com ID % não existe.', p_id_turma;
         END IF;
         
-        IF v_status_turma <> 'ativa' THEN
+        IF v_status_turma <> 'Ativa' THEN
             RAISE EXCEPTION 'Turma com ID % está inativa.', p_id_turma;
         END IF;
 
